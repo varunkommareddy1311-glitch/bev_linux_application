@@ -1,0 +1,25 @@
+[Unit]
+Description=Automotive BEV Application
+After=multi-user.target
+StartLimitIntervalSec=60
+StartLimitBurst=10
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bev-app /etc/bev /var/lib/bev/input /var/lib/bev/output
+Restart=always
+RestartSec=2
+
+# Calibration persists independently of the process (see docs/recovery.md,
+# Layer 4) so a restart does not require recalibration.
+StateDirectory=bev
+WorkingDirectory=/var/lib/bev
+
+# Hardening (safe defaults for an embedded automotive image; relax if the
+# target BSP requires broader device/GPU access for camera capture).
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/bev
+
+[Install]
+WantedBy=multi-user.target
